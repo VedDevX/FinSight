@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-section reveal">
+  <h2>Loan Default Risk Prediction</h2>
+
+  {% if error %}
+    <div class="error">{{ error }}</div>
+  {% endif %}
+
+  <form method="POST" class="form-grid" onsubmit="showLoader()">
+    <label class="field">
+      <span class="field-label">Revolving Utilization of Unsecured Lines</span>
+      <input type="number" name="RevolvingUtilizationOfUnsecuredLines" step="0.0001" required placeholder="e.g. 0.15">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Age</span>
+      <input type="number" name="age" step="1" required placeholder="e.g. 45">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Times 30–59 Days Past Due</span>
+      <input type="number" name="NumberOfTime30-59DaysPastDueNotWorse" step="1" placeholder="e.g. 0">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Debt Ratio</span>
+      <input type="number" name="DebtRatio" step="0.01" required placeholder="e.g. 0.5">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Monthly Income</span>
+      <input type="number" name="MonthlyIncome" step="0.01" placeholder="e.g. 5000 (leave blank if unknown)">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Open Credit Lines & Loans</span>
+      <input type="number" name="NumberOfOpenCreditLinesAndLoans" step="1" placeholder="e.g. 3">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Times 90+ Days Late</span>
+      <input type="number" name="NumberOfTimes90DaysLate" step="1" placeholder="e.g. 0">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Real Estate Loans or Lines</span>
+      <input type="number" name="NumberRealEstateLoansOrLines" step="1" placeholder="e.g. 0">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Times 60–89 Days Past Due</span>
+      <input type="number" name="NumberOfTime60-89DaysPastDueNotWorse" step="1" placeholder="e.g. 0">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Number of Dependents</span>
+      <input type="number" name="NumberOfDependents" step="1" placeholder="e.g. 0">
+    </label>
+
+    <div class="form-actions">
+      <button type="submit" class="btn primary">Predict Default Risk</button>
+      <button type="reset" class="btn ghost" onclick="document.getElementById('main').scrollIntoView({behavior:'smooth'})">Reset</button>
+    </div>
+  </form>
+
+  {% if result %}
+    {% if result.ok %}
+      {% set pct = (result.probability * 100) | round(2) %}
+      <div class="result-card reveal">
+        <div class="result-top">
+          <div class="badge {{ 'risk-high' if result.prediction == 1 else 'risk-low' }}">
+            {{ 'High Default Risk' if result.prediction == 1 else 'Low Default Risk' }}
+          </div>
+          <div class="result-text">Probability: <strong>{{ pct }}%</strong></div>
+        </div>
+
+        <div class="result-body">
+          {% if result.prediction == 1 %}
+            <p class="muted">Recommended: review customer documents, ask for additional collateral or manual underwriting.</p>
+          {% else %}
+            <p class="muted">Low probability of default — proceed with standard checks.</p>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <div class="error">Error: {{ result.error }}</div>
+    {% endif %}
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+    <div class="hero-inner">
+        <h1 class="hero-title">FinSight</h1>
+        <p class="hero-subtitle">Smart, fast & transparent loan approval and default-risk predictions.</p>
+
+        <div class="hero-actions">
+            <a href="{{ url_for('main.loan_approval') }}" class="btn primary">Loan Approval</a>
+            <a href="{{ url_for('main.loan_default') }}" class="btn ghost">Loan Default</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-section reveal">
+  <h2>Loan Approval Prediction</h2>
+
+  {% if error %}
+    <div class="error">{{ error }}</div>
+  {% endif %}
+
+  <form method="POST" class="form-grid" onsubmit="showLoader()">
+    <!-- NOTE: form field NAMES match backend exactly (capitalize keys) -->
+    <label class="field">
+      <span class="field-label">Gender</span>
+      <select name="Gender" required>
+        <option value="" disabled selected hidden>Select gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Marital Status</span>
+      <select name="Married" required>
+        <option value="" disabled selected hidden>Select marital status</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Dependents</span>
+      <select name="Dependents" required>
+        <option value="" disabled selected hidden>Select dependents</option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3+">3+</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Education</span>
+      <select name="Education" required>
+        <option value="" disabled selected hidden>Select education</option>
+        <option value="Graduate">Graduate</option>
+        <option value="Not Graduate">Not Graduate</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Self Employed</span>
+      <select name="Self_Employed" required>
+        <option value="" disabled selected hidden>Are you self-employed?</option>
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Credit History</span>
+      <!-- show Good / Bad to user, but send Yes/No to backend -->
+      <select name="Credit_History" required>
+        <option value="" disabled selected hidden>Select credit history</option>
+        <option value="Yes">Good</option>
+        <option value="No">Bad</option>
+      </select>
+      <small class="hint">Good means positive credit history; Bad indicates past delinquencies.</small>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Property Area</span>
+      <select name="Property_Area" required>
+        <option value="" disabled selected hidden>Select property area</option>
+        <option value="Urban">Urban</option>
+        <option value="Semiurban">Semiurban</option>
+        <option value="Rural">Rural</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Applicant Income</span>
+      <input type="number" name="ApplicantIncome" step="0.01" required placeholder="e.g. 5000">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Coapplicant Income</span>
+      <input type="number" name="CoapplicantIncome" step="0.01" placeholder="e.g. 0">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Loan Amount</span>
+      <input type="number" name="LoanAmount" step="0.01" required placeholder="e.g. 150000">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Loan Term (months)</span>
+      <input type="number" name="Loan_Amount_Term" step="1" required placeholder="e.g. 360">
+    </label>
+
+    <div class="form-actions">
+      <button type="submit" class="btn primary">Predict Approval</button>
+      <button type="reset" class="btn ghost" onclick="document.getElementById('main').scrollIntoView({behavior:'smooth'})">Reset</button>
+    </div>
+  </form>
+
+  {% if result %}
+    {% if result.ok %}
+      <div class="result-card reveal">
+        {% if result.label == 1 %}
+          <div class="badge approved">Approved ✅</div>
+          <div class="result-text">Eligible Loan Amount: <strong>₹ {{ result.eligible_amount | round(2) }}</strong></div>
+        {% else %}
+          <div class="badge rejected">Rejected ❌</div>
+          <div class="result-text">No loan will be disbursed.</div>
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="error">Error: {{ result.error }}</div>
+    {% endif %}
+  {% endif %}
+</section>
+{% endblock %}
